@@ -1,5 +1,5 @@
 class GigsController < ApplicationController
-  before_action :set_creator, only: [:show, :update, :destroy]
+  before_action :set_gig, only: [:show, :update, :destroy, :set_complete]
 
   # GET /gigs
   def index
@@ -22,7 +22,6 @@ class GigsController < ApplicationController
   # POST /gigs
   def create
     @gig = Gig.new(gig_params)
-    @gig.state = 'applied'
     if @gig.save
       render json: @gig, status: :created, location: @gig
     else
@@ -39,9 +38,24 @@ class GigsController < ApplicationController
     end
   end
 
+  # DELETE /gigs/1
+  def destroy
+    @gig.destroy
+  end
+
+  # PUT /gigs/1/set_complete
+  def set_complete
+    @gig.set_complete
+    if @gig.save
+      render json: @gig
+    else
+      render json: @gig.errors, status: :bad_request
+    end
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
-    def set_creator
+    def set_gig
       @gig = Gig.find(params[:id])
     end
     # Only allow a trusted parameter "white list" through.
